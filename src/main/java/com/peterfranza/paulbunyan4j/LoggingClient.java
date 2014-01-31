@@ -10,8 +10,16 @@ public interface LoggingClient {
 		long getMessageCount();
 	}
 	
-	interface LoggingStatistics {
+	interface LoggingStatistics {		
+		void getRecords(LoggingStatisticsRecordsVisitor visitor);
+		void getSamples(LoggingStatisticsSamplesVisitor visitor);		
+	}
+	
+	interface LoggingStatisticsRecordsVisitor {
 		
 	}
 	
+	interface LoggingStatisticsSamplesVisitor {
+		
+	}
 }
