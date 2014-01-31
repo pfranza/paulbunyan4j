@@ -1,9 +1,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.peterfranza</groupId>
 	<artifactId>paulbunyan4j</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	
+	<name>PaulBunyan4j</name>
+  	<description>The greatest cluster logger in the northeast</description>
+  	<url>https://github.com/pfranza/paulbunyan4j</url>
+	
+	<licenses>
+    <license>
+      <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3.0</name>
+      <url>https://github.com/pfranza/paulbunyan4j/blob/master/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+   </licenses>
+	
+	<scm>
+      <url>https://github.com/pfranza/paulbunyan4j</url>
+    </scm>
+	
 	<dependencies>
 		<dependency>
 			<groupId>com.google.inject</groupId>
