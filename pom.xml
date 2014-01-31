@@ -10,11 +10,13 @@
 			<artifactId>guice</artifactId>
 			<version>4.0-beta</version>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
 			<artifactId>akka-actor_2.10</artifactId>
 			<version>LATEST</version>
 		</dependency>
+		 -->
 
 		<dependency>
 			<groupId>com.google.protobuf</groupId>

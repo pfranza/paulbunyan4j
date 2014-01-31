@@ -1,6 +1,15 @@
-message Person {
-  required int32 id = 1;
-  required string name = 2;
-  optional string email = 3;
+package com.peterfranza.paulbunyan4j.messages;
+
+message LoggingMessage {
+  required string applicationid = 1;
+  required string applicationinstanceid = 2;
+  required string hostname = 3;
+  required int64  timestamp = 4;
+  
+  required string label    = 5;
+  optional int64  duration = 6;
+  optional string username = 7;
+  optional string message = 8;
+  optional int32    ttl      = 9;
   
 }
