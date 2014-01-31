@@ -10,4 +10,8 @@ public interface LoggingClient {
 		long getMessageCount();
 	}
 	
+	interface LoggingStatistics {
+		
+	}
+	
 }

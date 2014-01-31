@@ -17,6 +17,8 @@ public class DefaultLoggingClientReceiver implements Runnable {
 
 	private DatagramSocket serverSocket;
 	private long messageCount = 0;
+	
+	@Inject DefaultLogStatisticsManager statisticsManager;
 
 	@Inject
 	DefaultLoggingClientReceiver(@Named("servicePort") int servicePort) throws SocketException {
@@ -24,7 +26,7 @@ public class DefaultLoggingClientReceiver implements Runnable {
 		new Thread(this){{setDaemon(true);}}.start();
 	}
 	
-	public void run() {
+	public final void run() {
 		
 		byte[] receiveData = new byte[1500];
 		try {
@@ -32,6 +34,7 @@ public class DefaultLoggingClientReceiver implements Runnable {
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
 				LoggingMessage msg = LoggingMessage.parseFrom(ByteString.copyFrom(receiveData, 0, receivePacket.getLength()));
+				statisticsManager.processMessage(msg);
 				processMessage(msg);
 				messageCount += 1;
 			}	
@@ -40,18 +43,11 @@ public class DefaultLoggingClientReceiver implements Runnable {
 		}
 	}
 	
-	private void processMessage(LoggingMessage msg) {
-		
-	}
+	protected void processMessage(LoggingMessage msg) {}
 	
 	public long getMessageCount() {
 		return messageCount;
 	}
-	
-//	public static void main(String[] args) throws Exception {
-//		new DefaultLoggingClientReceiver(9546);
-//		Thread.sleep(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
-//	}
-	
+
 	
 }
