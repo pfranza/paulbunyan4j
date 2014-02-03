@@ -1,5 +1,6 @@
 package com.peterfranza.paulbunyan4j.modules.impls;
 
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
@@ -21,6 +22,8 @@ public class DefaultLogStatisticsManager implements LoggingClient.LoggingStatist
 	@Named("message_retention_time")
 	private long messageRetentionTime;
 	
+	private long lastValue;
+	
 	LoadingCache<String, StatSample> graphs = CacheBuilder.newBuilder()
 			.maximumSize(10000)
 			.build(new CacheLoader<String, StatSample>() {
@@ -31,7 +34,8 @@ public class DefaultLogStatisticsManager implements LoggingClient.LoggingStatist
 	
 	public void processMessage(LoggingMessage msg) {
 		try {
-			graphs.get(msg.getApplicationid() + "/" + msg.getApplicationinstanceid() + "/" +msg.getLabel()).addSample(msg.getDuration(), msg.getTimestamp());
+			graphs.get(msg.getApplicationid() + " / " + msg.getApplicationinstanceid() + " / " +msg.getLabel()).addSample(msg.getDuration(), msg.getTimestamp());
+			lastValue = msg.getDuration();
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
@@ -108,6 +112,70 @@ public class DefaultLogStatisticsManager implements LoggingClient.LoggingStatist
 		public long getLastValue() {
 			return lastValue;
 		}
+	}
+
+
+	@Override
+	public String getReport() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<table border=\"1\" rules=\"all\">");
+		
+		buffer.append("<tr>")
+			.append("<th>").append("Label").append("</th>")
+			.append("<th>").append("Hits").append("</th>")
+			.append("<th>").append("Average").append("</th>")
+			.append("<th>").append("Total").append("</th>")
+			.append("<th>").append("Last").append("</th>")
+			.append("<th>").append("Min").append("</th>")
+			.append("<th>").append("Max").append("</th>")
+			.append("<th>").append("First").append("</th>")
+			.append("<th>").append("Last").append("</th>")
+			.append("</tr>");
+		
+		for(StatSample s: graphs.asMap().values()) {
+			buffer.append("<tr>")
+			.append("<td>").append(s.label).append("</td>")
+			.append("<td>").append(s.sampleCount).append("</td>")
+			.append("<td>").append(s.getAverage()).append("</td>")
+			.append("<td>").append(s.getTotal()).append("</td>")
+			.append("<td>").append(s.getLastValue()).append("</td>")
+			.append("<td>").append(s.getMinValue()).append("</td>")
+			.append("<td>").append(s.getMaxValue()).append("</td>")
+			.append("<td>").append(new Date(s.firstTimestamp)).append("</td>")
+			.append("<td>").append(new Date(s.lastTimestamp)).append("</td>")
+			.append("</tr>");
+		}
+		
+		buffer.append("</table>");
+		return buffer.toString();
+	}
+
+
+	@Override
+	public int getSamples() {
+		int c = 0;
+		for(StatSample s: graphs.asMap().values()) {
+			c += s.sampleCount;
+		}
+		return c;
+	}
+
+
+	@Override
+	public double getAverage() {
+		double sum = 0;
+		double samples = 0;
+		for(StatSample s: graphs.asMap().values()) {
+			sum += s.sampleSum;
+			samples += s.sampleCount;
+		}
+		return sum / samples;
+	}
+
+
+	@Override
+	public long getLastValue() {
+		return lastValue;
 	}
 
 }

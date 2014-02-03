@@ -24,11 +24,8 @@ public class LoggingClientModule extends AbstractModule {
 	private String applicationInstanceId;
 	private String applicationHostname;
 	
-//	InetAddress.getLocalHost().getHostName()
-	
 	public LoggingClientModule(String serviceAddress, int servicePort,
-			String applicationName, String applicationInstanceId,
-			String applicationHostname) {
+			String applicationName, String applicationInstanceId, String applicationHostname) {
 		super();
 		this.serviceAddress = serviceAddress;
 		this.servicePort = servicePort;

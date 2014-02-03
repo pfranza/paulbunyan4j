@@ -11,7 +11,11 @@ public interface LoggingClient {
 	}
 	
 	interface LoggingStatistics {		
-		void getSamples(LoggingStatisticsSamplesVisitor visitor);		
+		void getSamples(LoggingStatisticsSamplesVisitor visitor);	
+		String getReport();
+		int getSamples();
+		double getAverage();
+		long getLastValue();
 	}
 	
 	interface LoggingStatisticsSamplesVisitor {
