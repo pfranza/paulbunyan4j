@@ -11,15 +11,26 @@ public interface LoggingClient {
 	}
 	
 	interface LoggingStatistics {		
-		void getRecords(LoggingStatisticsRecordsVisitor visitor);
 		void getSamples(LoggingStatisticsSamplesVisitor visitor);		
 	}
 	
-	interface LoggingStatisticsRecordsVisitor {
-		
+	interface LoggingStatisticsSamplesVisitor {
+		void visit(LoggingStatisticsSample sample);
 	}
 	
-	interface LoggingStatisticsSamplesVisitor {
+	interface LoggingStatisticsSample {
+
+		long getLastValue();
+
+		long getMaxValue();
+
+		long getMinValue();
+
+		double getTotal();
+
+		double getAverage();
+
+		String getLabel();
 		
 	}
 }

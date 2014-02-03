@@ -9,6 +9,7 @@ message LoggingMessage {
   required string label    = 5;
   optional int64  duration = 6;
   optional string username = 7;
+  
   optional string message = 8;
   optional int32    ttl      = 9;
   

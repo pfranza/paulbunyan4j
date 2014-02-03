@@ -17,11 +17,13 @@ public class DefaultLoggingClientReceiver implements Runnable {
 
 	private DatagramSocket serverSocket;
 	private long messageCount = 0;
+	private long remoteMessageCount = 0;
 	
 	@Inject DefaultLogStatisticsManager statisticsManager;
 
 	@Inject
 	DefaultLoggingClientReceiver(@Named("servicePort") int servicePort) throws SocketException {
+		System.out.println("Listening for message on " + servicePort);
 		serverSocket = new DatagramSocket(servicePort);
 		new Thread(this){{setDaemon(true);}}.start();
 	}
@@ -34,19 +36,25 @@ public class DefaultLoggingClientReceiver implements Runnable {
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
 				LoggingMessage msg = LoggingMessage.parseFrom(ByteString.copyFrom(receiveData, 0, receivePacket.getLength()));
-				statisticsManager.processMessage(msg);
 				processMessage(msg);
-				messageCount += 1;
+				remoteMessageCount += 1;
 			}	
 		} catch(IOException ioe) {
 			System.err.println(ioe.getMessage());
 		}
 	}
 	
-	protected void processMessage(LoggingMessage msg) {}
+	protected final void processMessage(LoggingMessage msg) {
+		statisticsManager.processMessage(msg);
+		messageCount += 1;
+	}
 	
 	public long getMessageCount() {
 		return messageCount;
+	}
+	
+	public long getRemoteMessageCount() {
+		return remoteMessageCount;
 	}
 
 	

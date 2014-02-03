@@ -21,6 +21,10 @@ public class DefaultLoggingClientSender implements LoggingClient.LoggingSender {
 	
 	private long messageCount = 0;
 
+	{
+		System.out.println("Using DefaultLoggingClientSender");
+	}
+	
 	public void send(Messages.LoggingMessage message) {
 		try {
 			sendMessage(message.toByteArray());
