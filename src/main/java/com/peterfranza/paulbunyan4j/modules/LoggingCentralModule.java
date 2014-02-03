@@ -39,5 +39,5 @@ public class LoggingCentralModule extends AbstractModule {
 		bind(LoggingClient.LoggingStatistics.class).to(DefaultLogStatisticsManager.class);
 		
 	}
-
+	
 }

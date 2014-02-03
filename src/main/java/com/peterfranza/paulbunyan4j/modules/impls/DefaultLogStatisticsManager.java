@@ -1,12 +1,17 @@
 package com.peterfranza.paulbunyan4j.modules.impls;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -18,6 +23,8 @@ import com.peterfranza.paulbunyan4j.messages.Messages.LoggingMessage;
 @Singleton
 public class DefaultLogStatisticsManager implements LoggingClient.LoggingStatistics {
 
+	
+	
 	@Inject
 	@Named("message_retention_time")
 	private long messageRetentionTime;
@@ -32,9 +39,20 @@ public class DefaultLogStatisticsManager implements LoggingClient.LoggingStatist
 			}
 	});
 	
-	public void processMessage(LoggingMessage msg) {
+	Cache<String, LoggingMessage> messages;
+	
+	public synchronized void processMessage(LoggingMessage msg) {
 		try {
+			
+			if(messages == null) {
+				messages = CacheBuilder.newBuilder()
+						.maximumSize(10000)
+						.expireAfterWrite(messageRetentionTime, TimeUnit.MILLISECONDS)
+						.build();
+			}
+			
 			graphs.get(msg.getApplicationid() + " / " + msg.getApplicationinstanceid() + " / " +msg.getLabel()).addSample(msg.getDuration(), msg.getTimestamp());
+			messages.put(msg.getApplicationid() + " / " + msg.getUsername(), msg);
 			lastValue = msg.getDuration();
 		} catch (ExecutionException e) {
 			e.printStackTrace();
@@ -143,6 +161,32 @@ public class DefaultLogStatisticsManager implements LoggingClient.LoggingStatist
 			.append("<td>").append(s.getMaxValue()).append("</td>")
 			.append("<td>").append(new Date(s.firstTimestamp)).append("</td>")
 			.append("<td>").append(new Date(s.lastTimestamp)).append("</td>")
+			.append("</tr>");
+		}
+		
+		HashMap<String, StringBuffer> usernames = new HashMap<String, StringBuffer>();
+		for(LoggingMessage m: messages.asMap().values()) {
+			StringBuffer buf = usernames.get(m.getUsername());
+			if(buf == null){buf = new StringBuffer(); usernames.put(m.getUsername(), buf);}
+			if(!buf.toString().toLowerCase().contains(m.getApplicationid())) {
+				if(buf.length() > 0) {
+					buf.append(", ");
+				}
+				buf.append(m.getApplicationid());
+			}
+		}
+		buffer.append("</table>");
+		buffer.append("<table border=\"1\" rules=\"all\">");
+		
+		buffer.append("<tr>")
+			.append("<th>").append("Username").append("</th>")
+			.append("<th colspan=\"8\">").append("Applications").append("</th>")
+			.append("</tr>");
+		
+		for (Entry<String, StringBuffer> entry : usernames.entrySet()) {
+			buffer.append("<tr>")
+				.append("<td>").append(entry.getKey()).append("</td>")
+				.append("<td colspan=\"8\">").append(entry.getValue().toString()).append("</td>")
 			.append("</tr>");
 		}
 		

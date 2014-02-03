@@ -3,11 +3,16 @@ package com.peterfranza.paulbunyan4j.modules.impls;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.Test;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.peterfranza.paulbunyan4j.LoggingClient;
+import com.peterfranza.paulbunyan4j.messages.Messages.LoggingMessage;
 import com.peterfranza.paulbunyan4j.modules.LoggingCentralModule;
 import com.peterfranza.paulbunyan4j.modules.impls.DefaultLoggingClientSenderTest.DefaultLoggingClientSenderTestSample;
 
@@ -31,6 +36,7 @@ public class LocalLoggingLoopbackTest {
 		assertEquals(1, cRcv.getMessageCount());
 		assertEquals(m.getMessageCount(), cRcv.getMessageCount());
 		assertEquals(0, cRcv.getRemoteMessageCount());
+		
 	}
 
 }
