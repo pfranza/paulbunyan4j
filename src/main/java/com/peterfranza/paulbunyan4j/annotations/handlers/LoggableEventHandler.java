@@ -1,5 +1,7 @@
 package com.peterfranza.paulbunyan4j.annotations.handlers;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -24,8 +26,7 @@ public class LoggableEventHandler implements MethodInterceptor {
 	public Object invoke(MethodInvocation invocation) throws Throwable {
 		LoggableEvent event = invocation.getMethod().getAnnotation(LoggableEvent.class);
 		long startTime = System.currentTimeMillis();
-		Stopwatch watch = new Stopwatch();
-		watch.start();
+		Stopwatch watch = Stopwatch.createStarted();
 		Object val = invocation.proceed();
 		watch.stop();
 		
@@ -35,7 +36,7 @@ public class LoggableEventHandler implements MethodInterceptor {
 				.setHostname(hostname)
 				.setTimestamp(startTime)
 				.setLabel(event.value().equals("") ? invocation.getMethod().getName() : event.value())
-				.setDuration(watch.elapsedMillis())
+				.setDuration(watch.elapsed(TimeUnit.MILLISECONDS))
 				.setUsername(injector.getInstance(event.subjectProvider()).get()).build());
 			
 		return val;
