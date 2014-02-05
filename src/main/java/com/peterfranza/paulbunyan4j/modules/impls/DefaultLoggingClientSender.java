@@ -7,9 +7,11 @@ import java.net.InetAddress;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import com.peterfranza.paulbunyan4j.LoggingClient;
+import com.peterfranza.paulbunyan4j.LoggingClient.LoggingWrapper;
 import com.peterfranza.paulbunyan4j.messages.Messages;
 
 @Singleton
@@ -18,6 +20,7 @@ public class DefaultLoggingClientSender implements LoggingClient.LoggingSender {
 	@Inject DatagramSocket clientSocket;
 	@Inject @Named("LoggingEndpoint") InetAddress serviceAddress;
 	@Inject @Named("servicePort") int servicePort = 9876;
+	@Inject Provider<LoggingWrapper> wrapperProvider;
 	
 	private long messageCount = 0;
 
@@ -41,6 +44,11 @@ public class DefaultLoggingClientSender implements LoggingClient.LoggingSender {
 	
 	public long getMessageCount() {
 		return messageCount;
+	}
+
+	@Override
+	public LoggingWrapper createWrapper() {
+		return wrapperProvider.get();
 	}
 	
 }
