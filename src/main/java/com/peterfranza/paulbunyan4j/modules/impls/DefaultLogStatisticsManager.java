@@ -75,7 +75,7 @@ public class DefaultLogStatisticsManager implements LoggingClient.LoggingStatist
 		long sampleCount;
 		
 		long lastValue;
-		long minValue;
+		long minValue = Long.MAX_VALUE;
 		long maxValue;
 		
 		long firstTimestamp = -1;
